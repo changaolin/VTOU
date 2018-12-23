@@ -19,6 +19,7 @@ if __name__ == '__main__':
     if len(sys.argv) == 1:
         print('usage:python3 main.py [prepare|train|tag|test]')
     if len(sys.argv) >= 2:
+        # 用boson语料训练模型
         if sys.argv[1] == 'prepare':
             logger.debug("start prepare")
             # 处理预料，预训练得到初始模型用于进行序列标注任务
@@ -35,6 +36,7 @@ if __name__ == '__main__':
                 logger.debug("prepare-ERROR！")
 
         elif sys.argv[1] == 'train':
+            # 训练模型，taged 表示使用标注的搜狗语料训练
             dataPath = data_pre_pkl
             modelPath = pre_model_path
             if len(sys.argv) > 3:
@@ -56,6 +58,7 @@ if __name__ == '__main__':
                 logger.debug("train ERROR！")
 
         elif sys.argv[1] == 'test':
+            # 测试模型，taged 表示使用标注的搜狗语料测试
             dataPath = data_pre_pkl
             modelPath = pre_model_path
             if len(sys.argv) > 3:
@@ -70,6 +73,7 @@ if __name__ == '__main__':
             model.test()
 
         elif sys.argv[1] == 'tag':
+            # 使用boson语料训练的模型对搜狗语料进行标注，加大数据量，可能会引入较大的误差，待优化
             if len(sys.argv) > 3:
                 inp = sys.argv[2]
                 oup = sys.argv[3]

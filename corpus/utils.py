@@ -11,6 +11,13 @@ flags = r'[。！？；]'
 import re
 line_max = 20
 def get_entity(x,y,id2tag):
+    """
+    组合实体
+    :param x: text
+    :param y: pre
+    :param id2tag:
+    :return:
+    """
     entity=""
     res=[]
     for i in range(len(x)): #for every sen
