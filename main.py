@@ -1,6 +1,7 @@
 import sys,os
 from corpus import preText,savePkl
 from model import Model
+from ext import sendtoPhone
 data_base = 'corpus'
 data_pre_name = 'BosonNLP_NER_6C.txt'
 data_pre_pkl = 'BosonNLP.pkl'
@@ -17,7 +18,13 @@ if __name__ == '__main__':
             preText(data_pre_name,'result.txt',data_base)
             savePkl('result.txt',data_pre_pkl,data_base)
             model = Model(dataPath=os.path.join(data_base,data_pre_pkl),modelPath=pre_model_path)
-            model.train()
+            try:
+                model.train()
+                sendtoPhone('prepare down！')
+            except Exception as e:
+                print("error")
+                sendtoPhone('prepare ERROR！')
+
         elif sys.argv[1] == 'train':
             dataPath = data_pre_pkl
             modelPath = pre_model_path
@@ -30,7 +37,12 @@ if __name__ == '__main__':
                 print("dataPath:"+dataPath)
                 print("modelPath:" + modelPath)
             model = Model(dataPath=os.path.join(data_base, data_pre_pkl), modelPath=pre_model_path)
-            model.train()
+            try:
+                model.train()
+                sendtoPhone('train down！')
+            except Exception as e:
+                print("error")
+                sendtoPhone('train ERROR！')
         elif sys.argv[1] == 'test':
             if len(sys.argv) == 2:
                 model = Model(dataPath=os.path.join(data_base, data_pre_pkl), modelPath=pre_model_path)
@@ -44,7 +56,14 @@ if __name__ == '__main__':
             model = Model(dataPath=os.path.join(data_base,data_pre_pkl),modelPath=pre_model_path)
             inputP = os.path.join(data_base,inp)
             outP = os.path.join(data_base,oup)
-            model.tagText(inputP=inputP,outP=outP,pre=False)
+            try:
+                print("...")
+                # model.test(inputP=inputP,outP=outP,pre=False)
+                # sendtoPhone('test down！')
+            except Exception as e:
+                print(e)
+                # sendtoPhone("test Error")
+
         elif sys.argv[1] == 'tag':
             if len(sys.argv) > 3:
                 inp = sys.argv[2]
@@ -55,7 +74,11 @@ if __name__ == '__main__':
             model = Model(dataPath=os.path.join(data_base,data_pre_pkl),modelPath=pre_model_path)
             inputP = os.path.join(data_base,data_tag_ori_file)
             outP = os.path.join(data_base,data_tag_out_file)
-            model.tagText(inputP=inputP,outP=outP,pre=False)
+            try:
+                model.tagText(inputP=inputP, outP=outP, pre=False)
+                sendtoPhone('tag down！')
+            except Exception as e:
+                print(e)
+                sendtoPhone("tag Error")
 
     pass
-# https://repo.continuum.io/archive/Anaconda3-2018.12-Linux-x86_64.sh

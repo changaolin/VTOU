@@ -4,7 +4,7 @@
     conda create -n env4Vtou python=3.6.5
     conda activate env4Vtou
     conda install tensorflow-gpu
-    pip install numpy pandas sklearn -i https://pypi.doubanio.com/simple
+    pip install numpy pandas sklearn keras -i https://pypi.doubanio.com/simple
     watch -n1 nvidia-smi
 #github:
     git clone https://github.com/changaolin/VTOU.git
