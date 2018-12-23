@@ -38,15 +38,13 @@ if __name__ == '__main__':
             dataPath = data_pre_pkl
             modelPath = pre_model_path
             if len(sys.argv) > 3:
-                dataPath = sys.argv[2]
-                modelPath = sys.argv[3]
-            elif sys.argv[2] == 'taged':
-                dataPath = data_tag_out_pkl
-                modelPath = taged_model_path
-                logger.debug("dataPath:"+dataPath)
-                logger.debug("modelPath:" + modelPath)
-                print("dataPath:"+dataPath)
-                print("modelPath:" + modelPath)
+                if sys.argv[2] == 'taged':
+                    dataPath = data_tag_out_pkl
+                    modelPath = taged_model_path
+                    logger.debug("dataPath:"+dataPath)
+                    logger.debug("modelPath:" + modelPath)
+                    print("dataPath:"+dataPath)
+                    print("modelPath:" + modelPath)
             model = Model(dataPath=os.path.join(data_base, dataPath), modelPath=modelPath)
             try:
                 model.train()
@@ -56,19 +54,18 @@ if __name__ == '__main__':
                 print("error")
                 sendtoPhone('train-ERROR')
                 logger.debug("train ERROR！")
+
         elif sys.argv[1] == 'test':
             dataPath = data_pre_pkl
             modelPath = pre_model_path
             if len(sys.argv) > 3:
-                dataPath = sys.argv[2]
-                modelPath = sys.argv[3]
-            elif sys.argv[2] == 'taged':
-                dataPath = data_tag_out_pkl
-                modelPath = taged_model_path
-                logger.debug("dataPath:" + dataPath)
-                logger.debug("modelPath:" + modelPath)
-                print("dataPath:" + dataPath)
-                print("modelPath:" + modelPath)
+                if sys.argv[2] == 'taged':
+                    dataPath = data_tag_out_pkl
+                    modelPath = taged_model_path
+                    logger.debug("dataPath:" + dataPath)
+                    logger.debug("modelPath:" + modelPath)
+                    print("dataPath:" + dataPath)
+                    print("modelPath:" + modelPath)
             model = Model(dataPath=os.path.join(data_base, dataPath), modelPath=modelPath)
             model.test()
 
