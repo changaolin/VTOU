@@ -5,7 +5,7 @@ import string
 appcode = '***'
 querys = '**'
 myphone='**'
-send = True
+send = False
 def sendtoPhone(msg='训练结果',appcode=appcode,querys=querys):
     if send == False:
         return
