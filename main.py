@@ -5,12 +5,12 @@ data_base = 'corpus'
 data_pre_name = 'BosonNLP_NER_6C.txt'
 data_pre_pkl = 'BosonNLP.pkl'
 pre_model_path = './preModel'
-data_tag_ori_file = 'shangyeSub.txt'
+data_tag_ori_file = 'shangye.txt'
 data_tag_out_file = "Tag.pkl"
 taged_model_path = './TagedModel'
 if __name__ == '__main__':
     if len(sys.argv) == 1:
-        print('usage:python3 main.py [prepare|train]')
+        print('usage:python3 main.py [prepare|train|tag|test]')
     if len(sys.argv) >= 2:
         if sys.argv[1] == 'prepare':
             # 处理预料，预训练得到初始模型用于进行序列标注任务

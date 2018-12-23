@@ -1,5 +1,6 @@
 import numpy as np
 import tensorflow as tf
+import keras.backend.tensorflow_backend as KTF
 from tensorflow.contrib.crf import crf_decode,crf_log_likelihood
 from BatchGenerator import BatchGenerator
 from corpus import test_input,tagText
@@ -11,6 +12,9 @@ class Model(object):
     """BILSTM-CRF Model"""
     def __init__(self,dataPath,modelPath='model'):
         super(Model, self).__init__()
+        config = tf.ConfigProto()
+        config.gpu_options.allow_growth = True  # 不全部占满显存, 按需分配
+        self.sess = tf.InteractiveSession(config=config)
         self._load_dataSet(dataPath)
         batch_size = self.config["batch_size"]
         sen_len = self.config['sen_len']
@@ -91,15 +95,15 @@ class Model(object):
         batch_size = self.config['batch_size']
         epochs = self.config['epochs']
         batch_num = int(self.data_train.y.shape[0] / batch_size)
-        with tf.Session() as sess:
-            sess.run(tf.global_variables_initializer())
+        if 1 == 1:
+            self.sess.run(tf.global_variables_initializer())
             for epoch in range(epochs):
                 print("epoch:"+str(epoch))
                 print("batch_num:" + str(batch_num))
                 for batch in range(batch_num):
                     x_batch, y_batch = self.data_train.next_batch(batch_size)
                     feed_dict = {self.input_data: x_batch, self.targets: y_batch}
-                    pre, _ = sess.run([self.viterbi_sequence, self.train_op], feed_dict=feed_dict)
+                    pre, _ = self.sess.run([self.viterbi_sequence, self.train_op], feed_dict=feed_dict)
                     acc = 0
                     if batch % 200 == 0:
                         print("epoch:"+str(epoch)+" -- batch:"+str(batch)+" -- batch_len:"+str(len(y_batch)))
@@ -111,30 +115,33 @@ class Model(object):
                 if epoch % 3 == 0:
                     path_name = self.modelPath+"/model" + str(epoch) + ".ckpt"
                     print("save", path_name)
-                    self.saver.save(sess, path_name)
+                    self.saver.save(self.sess, path_name)
+        self.sess.close()
     def test(self):
         batch_size = self.config['batch_size']
-        with tf.Session() as sess:
-            sess.run(tf.global_variables_initializer())
+        if 1==1:
+            self.sess.run(tf.global_variables_initializer())
             ckpt = tf.train.get_checkpoint_state(self.modelPath)
             if ckpt is None:
                 print("ckpt is None")
                 return
             path = ckpt.model_checkpoint_path
-            self.saver.restore(sess,path)
-            test_input(self,sess,self.word2id,self.id2tag,batch_size)
+            self.saver.restore(self.sess,path)
+            test_input(self,self.sess,self.word2id,self.id2tag,batch_size)
+            self.sess.close()
 
     def tagText(self,inputP,outP,pre=False):
         batch_size = self.config['batch_size']
-        with tf.Session() as sess:
-            sess.run(tf.global_variables_initializer())
+        if 1==1:
+            self.sess.run(tf.global_variables_initializer())
             ckpt = tf.train.get_checkpoint_state(self.modelPath)
             if ckpt is None:
                 print("ckpt is None")
                 return
             path = ckpt.model_checkpoint_path
-            self.saver.restore(sess, path)
-            tagText(inputP, outP, self, sess, self.word2id, self.id2tag, batch_size,pre)
+            self.saver.restore(self.sess, path)
+            tagText(inputP, outP, self, self.sess, self.word2id, self.id2tag, batch_size,pre)
+            self.sess.close()
 
         pass
     pass
