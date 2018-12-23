@@ -6,7 +6,7 @@ from BatchGenerator import BatchGenerator
 from corpus import test_input,tagText
 import pickle
 from utils import taLogging
-logger = taLogging.getFileLogger(name='model',file='model.log')
+logger = taLogging.getFileLogger(name='model',file='log/model.log')
 
 class Model(object):
     """BILSTM-CRF Model"""
@@ -119,7 +119,7 @@ class Model(object):
                         logger.debug("epoch:"+str(epoch)+" -- acc_rate:"+str(float(acc) / (len(y_batch) * len(y_batch[0]))))
                 if epoch % 3 == 0:
                     path_name = self.modelPath+"/model" + str(epoch) + ".ckpt"
-                    logger.debug("save", path_name)
+                    logger.debug("save:"+path_name)
                     self.saver.save(self.sess, path_name)
         self.sess.close()
     def test(self):

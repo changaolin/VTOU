@@ -4,7 +4,7 @@ import pandas as pd
 import pickle
 from sklearn.model_selection import train_test_split
 from utils import taLogging
-logger = taLogging.getFileLogger(name='util',file='util.log')
+logger = taLogging.getFileLogger(name='util',file='log/util.log')
 sep=' '
 max_len = 60
 flags = r'[。！？]'
@@ -144,6 +144,11 @@ def splitText(inp,oup):
     logger.debug("End split Text")
     return new_lines
 def tagText(input_path, output_path, model, sess, word2id, id2tag, batch_size,pre=False):
+    info = {
+        'input':input_path,
+        "output":output_path
+    }
+    logger.debug(info)
     if pre == False:
         lines = splitText(input_path,output_path)
     else:
@@ -183,6 +188,7 @@ def tagText(input_path, output_path, model, sess, word2id, id2tag, batch_size,pr
         predict.append(pre[0])
     predict = np.asarray(predict).reshape(-1, max_len)
     with open(output_path,'w',encoding='utf-8') as outp:
+        logger.debug("len(text):"+str(len(text)))
         for index in range(len(text)):
             if (index % 1000) == 0:
                 logger.debug("get entity:" + str(index))
