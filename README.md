@@ -35,12 +35,18 @@
     12月18日，大富科技召开董事会，审议通过了《关于转让全资子公司股权的议案》。大富科技将全资子公司安徽省大富重工技术有限公司（以下简称“大富重工”）100%股权，转让给蚌埠高新投资集团有限公司（以下简称“蚌埠高新投”）
 
 ##conda(GPU加速环境):
-    wget https://repo.continuum.io/archive/Anaconda3-2018.12-Linux-x86_64.sh
-    conda install 3.6.5
-    conda create -n env4Vtou python=3.6.5
-    conda activate env4Vtou
-    conda install tensorflow-gpu
-    pip install numpy pandas sklearn keras -i https://pypi.doubanio.com/simple
+    wget https://repo.continuum.io/archive/Anaconda3-2018.12-Linux-x86_64.sh  
+    
+    conda install 3.6.5  
+    
+    conda create -n env4Vtou python=3.6.5  
+    
+    conda activate env4Vtou  
+    
+    conda install tensorflow-gpu  
+    
+    pip install numpy pandas sklearn keras -i https://pypi.doubanio.com/simple  
+    
     watch -n1 nvidia-smi
 ##github:
     git clone https://github.com/changaolin/VTOU.git
