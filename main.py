@@ -2,6 +2,8 @@ import sys,os
 from corpus import preText,savePkl
 from model import Model
 from ext import sendtoPhone
+from utils import taLogging
+logger = taLogging.getFileLogger(name='main',level=1,file='main.log')
 data_base = 'corpus'
 data_pre_name = 'BosonNLP_NER_6C.txt'
 data_pre_pkl = 'BosonNLP.pkl'
@@ -9,11 +11,13 @@ pre_model_path = './preModel'
 data_tag_ori_file = 'shangye.txt'
 data_tag_out_file = "Tag.pkl"
 taged_model_path = './TagedModel'
+
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         print('usage:python3 main.py [prepare|train|tag|test]')
     if len(sys.argv) >= 2:
         if sys.argv[1] == 'prepare':
+            logger.debug("start prepare")
             # 处理预料，预训练得到初始模型用于进行序列标注任务
             preText(data_pre_name,'result.txt',data_base)
             savePkl('result.txt',data_pre_pkl,data_base)
@@ -21,9 +25,11 @@ if __name__ == '__main__':
             try:
                 model.train()
                 sendtoPhone('prepare down！')
+                logger.debug("prepare down！")
             except Exception as e:
                 print("error")
                 sendtoPhone('prepare ERROR！')
+                logger.debug("prepare ERROR！")
 
         elif sys.argv[1] == 'train':
             dataPath = data_pre_pkl
@@ -40,9 +46,11 @@ if __name__ == '__main__':
             try:
                 model.train()
                 sendtoPhone('train down！')
+                logger.debug("train down！！")
             except Exception as e:
                 print("error")
                 sendtoPhone('train ERROR！')
+                logger.debug("train ERROR！")
         elif sys.argv[1] == 'test':
             if len(sys.argv) == 2:
                 model = Model(dataPath=os.path.join(data_base, data_pre_pkl), modelPath=pre_model_path)
@@ -77,8 +85,10 @@ if __name__ == '__main__':
             try:
                 model.tagText(inputP=inputP, outP=outP, pre=False)
                 sendtoPhone('tag down！')
+                logger.debug("tag down！")
             except Exception as e:
                 print(e)
-                sendtoPhone("tag Error")
+                sendtoPhone("tag ERROR")
+                logger.debug("tag ERROR！")
 
     pass

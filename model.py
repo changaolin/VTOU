@@ -5,13 +5,14 @@ from tensorflow.contrib.crf import crf_decode,crf_log_likelihood
 from BatchGenerator import BatchGenerator
 from corpus import test_input,tagText
 import pickle
-
-
+from utils import taLogging
+logger = taLogging.getFileLogger(name='model',file='model.log')
 
 class Model(object):
     """BILSTM-CRF Model"""
     def __init__(self,dataPath,modelPath='model'):
         super(Model, self).__init__()
+        logger.debug('model init')
         config = tf.ConfigProto()
         config.gpu_options.allow_growth = True  # 不全部占满显存, 按需分配
         self.sess = tf.InteractiveSession(config=config)
@@ -25,6 +26,7 @@ class Model(object):
             self._build_net()
 
     def _load_dataSet(self,dataPath):
+        logger.debug('model _load_dataSet')
         with open(dataPath, 'rb') as inp:
             self.word2id = pickle.load(inp)
             self.id2word = pickle.load(inp)
@@ -50,9 +52,11 @@ class Model(object):
         config["epochs"] = epochs
         config["dropout_keep"] = 1
         self.config = config
+        logger.debug(config)
         pass
 
     def _build_net(self):
+        logger.debug('model _build_net')
         emb_size = self.config['emb_size']
         emb_dim = self.config['emb_dim']
         tag_size = self.config['tag_size']
@@ -92,38 +96,40 @@ class Model(object):
         self.saver = tf.train.Saver()
 
     def train(self):
+        logger.debug('model train')
         batch_size = self.config['batch_size']
         epochs = self.config['epochs']
         batch_num = int(self.data_train.y.shape[0] / batch_size)
         if 1 == 1:
             self.sess.run(tf.global_variables_initializer())
             for epoch in range(epochs):
-                print("epoch:"+str(epoch))
-                print("batch_num:" + str(batch_num))
+                logger.debug("epoch:"+str(epoch))
+                logger.debug("batch_num:" + str(batch_num))
                 for batch in range(batch_num):
                     x_batch, y_batch = self.data_train.next_batch(batch_size)
                     feed_dict = {self.input_data: x_batch, self.targets: y_batch}
                     pre, _ = self.sess.run([self.viterbi_sequence, self.train_op], feed_dict=feed_dict)
                     acc = 0
                     if batch % 200 == 0:
-                        print("epoch:"+str(epoch)+" -- batch:"+str(batch)+" -- batch_len:"+str(len(y_batch)))
+                        logger.debug("epoch:"+str(epoch)+" -- batch:"+str(batch)+" -- batch_len:"+str(len(y_batch)))
                         for i in range(len(y_batch)):
                             for j in range(len(y_batch[0])):
                                 if y_batch[i][j] == pre[i][j]:
                                     acc += 1
-                        print("epoch:"+str(epoch)+" -- acc_rate:"+str(float(acc) / (len(y_batch) * len(y_batch[0]))))
+                        logger.debug("epoch:"+str(epoch)+" -- acc_rate:"+str(float(acc) / (len(y_batch) * len(y_batch[0]))))
                 if epoch % 3 == 0:
                     path_name = self.modelPath+"/model" + str(epoch) + ".ckpt"
-                    print("save", path_name)
+                    logger.debug("save", path_name)
                     self.saver.save(self.sess, path_name)
         self.sess.close()
     def test(self):
+        logger.debug('model test')
         batch_size = self.config['batch_size']
         if 1==1:
             self.sess.run(tf.global_variables_initializer())
             ckpt = tf.train.get_checkpoint_state(self.modelPath)
             if ckpt is None:
-                print("ckpt is None")
+                logger.debug("ckpt is None")
                 return
             path = ckpt.model_checkpoint_path
             self.saver.restore(self.sess,path)
@@ -131,12 +137,13 @@ class Model(object):
             self.sess.close()
 
     def tagText(self,inputP,outP,pre=False):
+        logger.debug('tagText test')
         batch_size = self.config['batch_size']
         if 1==1:
             self.sess.run(tf.global_variables_initializer())
             ckpt = tf.train.get_checkpoint_state(self.modelPath)
             if ckpt is None:
-                print("ckpt is None")
+                logger.debug("ckpt is None")
                 return
             path = ckpt.model_checkpoint_path
             self.saver.restore(self.sess, path)

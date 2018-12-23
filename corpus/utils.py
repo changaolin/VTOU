@@ -3,6 +3,8 @@ import numpy as np
 import pandas as pd
 import pickle
 from sklearn.model_selection import train_test_split
+from utils import taLogging
+logger = taLogging.getFileLogger(name='util',file='util.log')
 sep=' '
 max_len = 60
 flags = r'[。！？]'
@@ -117,7 +119,7 @@ def write_entity_for_tag(x,y,id2tag):
 def splitText(inp,oup):
     new_lines = []
     oup=oup+".tmp"
-    print("start split Text")
+    logger.debug("start split Text")
     with open(inp,'r',encoding='utf-8') as readin,\
         open(oup,'w',encoding='utf-8') as writeto:
         i = 0
@@ -127,7 +129,7 @@ def splitText(inp,oup):
             i+=1
             if (i % 100) == 0:
                 i = 1
-                print(".")
+                logger.debug(".")
             if len(line.strip()) == 0:
                 continue
             lines = re.split(flags,line)
@@ -139,7 +141,7 @@ def splitText(inp,oup):
                 else:
                     writeto.write(l)
                     new_lines.extend([l])
-    print("End split Text")
+    logger.debug("End split Text")
     return new_lines
 def tagText(input_path, output_path, model, sess, word2id, id2tag, batch_size,pre=False):
     if pre == False:
@@ -155,7 +157,7 @@ def tagText(input_path, output_path, model, sess, word2id, id2tag, batch_size,pr
         y += 1
         if (y % 1000) == 0:
             y = 1
-            print("read Text+..")
+            logger.debug("read Text+..")
         if len(line.strip()) == 0:
             continue
         word_id = []
@@ -172,10 +174,10 @@ def tagText(input_path, output_path, model, sess, word2id, id2tag, batch_size,pr
     text_id = np.asarray(text_id)
     text_id = text_id.reshape(-1,batch_size,max_len)
     predict = []
-    print("len(text_id):"+str(len(text_id)))
+    logger.debug("len(text_id):"+str(len(text_id)))
     for index in range(len(text_id)):
         if (index % 1000) == 0:
-            print("pre:"+str(index))
+            logger.debug("pre:"+str(index))
         feed_dict = {model.input_data: text_id[index]}
         pre = sess.run([model.viterbi_sequence], feed_dict)
         predict.append(pre[0])
@@ -183,7 +185,7 @@ def tagText(input_path, output_path, model, sess, word2id, id2tag, batch_size,pr
     with open(output_path,'w',encoding='utf-8') as outp:
         for index in range(len(text)):
             if (index % 1000) == 0:
-                print("get entity:" + str(index))
+                logger.debug("get entity:" + str(index))
             result = write_entity_for_tag(text[index], predict[index], id2tag)
             # print(str(index)+":"+result[:5])
             outp.write(result+'\n')
@@ -195,14 +197,14 @@ def savePkl(inpf,oupf,base):
     tags = set()
     inpf = os.path.join(base,inpf)
     oupf = os.path.join(base, oupf)
-    print("start save PKl")
+    logger.debug("start save PKl")
     with open(inpf,'r',encoding='utf-8') as inp:
         y = 0
         for line in inp.readlines():
             y += 1
             if (y % 1000) == 0:
                 y = 1
-                print("*")
+                logger.debug("*")
             line = line.split()
             linedata = []
             linelabel = []
@@ -217,8 +219,9 @@ def savePkl(inpf,oupf,base):
             if numNotO != 0:
                 datas.append(linedata)
                 labels.append(linelabel)
-    print(len(datas),tags)
-    print(len(labels))
+    logger.debug(len(datas))
+    logger.debug(tags)
+    logger.debug(len(labels))
     new_datas = []
     for data in datas:
         new_datas.extend(data)
@@ -260,5 +263,5 @@ def savePkl(inpf,oupf,base):
         ll = [word2id,id2word,tag2id,id2tag,x_train,y_train,x_test,y_test]
         dumpPkl(ll,out)
         pass
-    print("End save PKl")
+    logger.debug("End save PKl")
 
