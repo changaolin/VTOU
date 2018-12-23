@@ -115,9 +115,9 @@ def splitCorpus():
 
 
 if __name__ == '__main__':
-    # splitCorpus()
-    # clean()
-    # con()
+    splitCorpus()
+    clean()
+    con()
     getCorpusWithType()
     # getCorpusWithTypeTmp()
     pass

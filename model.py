@@ -123,7 +123,7 @@ class Model(object):
                     self.saver.save(self.sess, path_name)
         self.sess.close()
     def test(self):
-        logger.debug('model test')
+        logger.debug('model-test')
         batch_size = self.config['batch_size']
         if 1==1:
             self.sess.run(tf.global_variables_initializer())

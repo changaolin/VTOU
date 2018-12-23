@@ -7,7 +7,7 @@ from utils import taLogging
 logger = taLogging.getFileLogger(name='util',file='log/util.log')
 sep=' '
 max_len = 60
-flags = r'[。！？]'
+flags = r'[。！？；]'
 import re
 line_max = 20
 def get_entity(x,y,id2tag):
@@ -44,7 +44,6 @@ def padding_word(sen):
 def test_input(model,sess,word2id,id2tag,batch_size):
     while True:
         text = input("Enter your input: ")
-        # flag = u'；。！？"\\n"'
         text = re.split(flags, text)
         text_id=[]
         for sen in text:
@@ -93,7 +92,8 @@ def write_entity_for_tag(x,y,id2tag):
     entity=''
     line = []
     tag = ''
-    for i in range(len(x)):
+    le = min(len(x),max_len)
+    for i in range(le):
         if y[i]==0:
             continue
         if id2tag[y[i]][0]=='B':
@@ -106,7 +106,6 @@ def write_entity_for_tag(x,y,id2tag):
         elif id2tag[y[i]][0]=='E' and len(entity)!=0:
             line.append(x[i] + "/" + "E_" + tag)
             entity+=x[i]
-            # outp.write(entity+' ')
             entity=''
         elif id2tag[y[i]][0]=='O':
             line.append(x[i] + "/" + "O")
@@ -193,7 +192,6 @@ def tagText(input_path, output_path, model, sess, word2id, id2tag, batch_size,pr
             if (index % 1000) == 0:
                 logger.debug("get entity:" + str(index))
             result = write_entity_for_tag(text[index], predict[index], id2tag)
-            # print(str(index)+":"+result[:5])
             outp.write(result+'\n')
     pass
 
