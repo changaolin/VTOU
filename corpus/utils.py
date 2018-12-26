@@ -193,6 +193,14 @@ def tagText(input_path, output_path, model, sess, word2id, id2tag, batch_size,pr
         pre = sess.run([model.viterbi_sequence], feed_dict)
         predict.append(pre[0])
     predict = np.asarray(predict).reshape(-1, max_len)
+
+    def dumpPkl(ll,out):
+        for l in ll:
+            pickle.dump(l,out)
+    with open("tmp.pkl",'wb') as out:
+        dumpPkl([predict],out)
+        pass
+
     with open(output_path,'w',encoding='utf-8') as outp:
         logger.debug("len(text):"+str(len(text)))
         for index in range(len(text)):
@@ -200,6 +208,7 @@ def tagText(input_path, output_path, model, sess, word2id, id2tag, batch_size,pr
                 logger.debug("get entity:" + str(index))
             result = write_entity_for_tag(text[index], predict[index], id2tag)
             outp.write(result+'\n')
+
     pass
 
 def savePkl(inpf,oupf,base):
